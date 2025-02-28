@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+import numpy as np
 
 # Histogram
 def histograms(df, columns, n_cols = 3):
@@ -65,4 +66,36 @@ def unique_histogram(df, column, rotation=0):
     plt.xlabel(column)
     plt.ylabel('Frequency')
     plt.xticks(rotation=rotation)
+    plt.show()
+
+# Boxplots
+def boxplots(df, categorical, continuous, n_cols=3):
+    # Calculate the total number of plots
+    total_plots = len(categorical) * len(continuous)
+    
+    # Calculate the number of rows needed
+    n_rows = int(np.ceil(total_plots / n_cols))
+    
+    # Create subplots
+    fig, axes = plt.subplots(nrows=n_rows, ncols=n_cols, figsize=(n_cols * 6, n_rows * 6))
+    
+    # Flatten axes to make iteration easier
+    axes = axes.flatten()
+    
+    plot_idx = 0
+    
+    # Iterate through each combination
+    for cat in categorical:
+        for cont in continuous:
+            if plot_idx < len(axes):
+                sns.boxplot(x=cat, y=cont, data=df, palette='Oranges', ax=axes[plot_idx])
+                axes[plot_idx].set_title(f'{cat} vs {cont}')
+                axes[plot_idx].tick_params(axis='x', rotation=45)
+                plot_idx += 1
+
+    # Hide any unused subplots
+    for idx in range(plot_idx, len(axes)):
+        axes[idx].axis('off')
+
+    plt.tight_layout()
     plt.show()
