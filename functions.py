@@ -117,7 +117,7 @@ def plot_crosstab(df, column1, column2, annot_kws={"rotation": 45}):
 
 
 # Plot Boxplot and histogram
-def plot_distribution_and_boxplot(df, column_name, color=main_color):
+def plot_distribution_and_boxplot(df, column_name, n_bins, color=main_color):
     """
     Plots the distribution and box plot for a specific column.
     
@@ -128,7 +128,7 @@ def plot_distribution_and_boxplot(df, column_name, color=main_color):
     """
     fig, axes = plt.subplots(1, 2, figsize=(14, 6))
 
-    sns.histplot(df[column_name], kde=True, bins=30, color=color, ax=axes[0])
+    sns.histplot(df[column_name], kde=True, bins=n_bins, color=color, ax=axes[0])
     axes[0].set_title(f"Distribution of {column_name}")
     axes[0].set_xlabel(column_name)
     axes[0].set_ylabel("Frequency")
