@@ -3,6 +3,9 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 
+# Define the main color
+main_color = '#568789'
+
 # Histogram
 def histograms(df, columns, n_cols = 3):
     
@@ -110,4 +113,29 @@ def plot_crosstab(df, column1, column2, annot_kws={"rotation": 45}):
     plt.figure(figsize=(10, 8))
     sns.heatmap(crosstab, annot=True, fmt="d", cmap='Oranges', annot_kws=annot_kws)
     plt.title(f'{column1} vs {column2}')
+    plt.show()
+
+
+# Plot Boxplot and histogram
+def plot_distribution_and_boxplot(df, column_name, color=main_color):
+    """
+    Plots the distribution and box plot for a specific column.
+    
+    Parameters:
+        df (pd.DataFrame): The DataFrame containing the data.
+        column_name (str): Column to visualize.
+        color (str): Plot color.
+    """
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+
+    sns.histplot(df[column_name], kde=True, bins=30, color=color, ax=axes[0])
+    axes[0].set_title(f"Distribution of {column_name}")
+    axes[0].set_xlabel(column_name)
+    axes[0].set_ylabel("Frequency")
+
+    sns.boxplot(x=df[column_name], color=color, ax=axes[1])
+    axes[1].set_title(f"Boxplot of {column_name}")
+    axes[1].set_xlabel(column_name)
+
+    plt.tight_layout()
     plt.show()
