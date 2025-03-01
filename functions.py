@@ -99,3 +99,15 @@ def boxplots(df, categorical, continuous, n_cols=3):
 
     plt.tight_layout()
     plt.show()
+
+# Crosstab
+def plot_crosstab(df, column1, column2, annot_kws={"rotation": 45}):
+
+    # Create the crosstab
+    crosstab = pd.crosstab(df[column1], df[column2])
+
+    # Plot the heatmap
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(crosstab, annot=True, fmt="d", cmap='Oranges', annot_kws=annot_kws)
+    plt.title(f'{column1} vs {column2}')
+    plt.show()
