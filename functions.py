@@ -233,3 +233,48 @@ def plot_counts(labels):
     plt.ylabel('Count')
     plt.xticks(rotation=0)
     plt.show()
+
+
+## Data Cleaning and Pre-processing
+# Function to apply the mode to columns with categorical data
+def mode(value):
+    # compute the mode
+    mode = value.mode()
+    if not mode.empty:
+        # returns the first mode, if there values that are equally frequent
+        return mode[0]
+    else:
+        # if no frequent value is found, return the first value
+        return value.iloc[0] 
+
+# Function to aggregate data based on 'DocIDHash','NameHash' and 'DistributionChannel'
+def aggregation(dataframe):
+    aggregation_rules = {
+        'Nationality': mode,
+        'Age': 'median',
+        'DaysSinceCreation': 'max',
+        'AverageLeadTime': 'mean',
+        'LodgingRevenue': 'sum',
+        'OtherRevenue': 'sum',
+        'BookingsCanceled': 'sum',
+        'BookingsNoShowed': 'sum',
+        'BookingsCheckedIn': 'sum',
+        'PersonsNights': 'sum',
+        'RoomNights': 'sum',
+        'MarketSegment': mode,
+        'SRHighFloor': mode,
+        'SRLowFloor': mode,
+        'SRAccessibleRoom': mode,
+        'SRMediumFloor': mode,
+        'SRBathtub': mode,
+        'SRShower': mode,
+        'SRCrib': mode,
+        'SRKingSizeBed': mode,
+        'SRTwinBed': mode,
+        'SRNearElevator': mode,
+        'SRAwayFromElevator': mode,
+        'SRNoAlcoholInMiniBar': mode,
+        'SRQuietRoom': mode
+    }
+    
+    return dataframe.groupby(['DocIDHash','NameHash','DistributionChannel']).agg(aggregation_rules).reset_index()
