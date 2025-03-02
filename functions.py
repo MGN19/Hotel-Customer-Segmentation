@@ -32,6 +32,9 @@ def missing_value_summary(dataframe):
     return summary
 
 # Data Visualization
+# Define the main color
+main_color = '#568789'
+
 # Histogram
 def histograms(df, columns, n_cols = 3):
     
@@ -140,4 +143,93 @@ def plot_crosstab(df, column1, column2, annot_kws={"rotation": 45}):
     plt.figure(figsize=(10, 8))
     sns.heatmap(crosstab, annot=True, fmt="d", cmap='Oranges', annot_kws=annot_kws)
     plt.title(f'{column1} vs {column2}')
+    plt.show()
+
+
+# Plot Boxplot and histogram
+def plot_distribution_and_boxplot(df, column_name, n_bins, out_left=None, out_right=None, color=main_color):
+    """
+    Plots the histogram and box plot for a specific column with optional outlier boundaries.
+
+    Parameters:
+        df (pd.DataFrame): The DataFrame containing the data.
+        column_name (str): Column to visualize.
+        n_bins (int): Number of bins for the histogram.
+        out_left (float, optional): Left boundary to exclude outliers. If None, no line is drawn.
+        out_right (float, optional): Right boundary to exclude outliers. If None, no line is drawn.
+        color (str): Plot color.
+    """
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+
+    # Histogram
+    sns.histplot(df[column_name], kde=True, bins=n_bins, color=color, ax=axes[0])
+    axes[0].set_title(f"Distribution of {column_name}")
+    axes[0].set_xlabel(column_name)
+    axes[0].set_ylabel("Frequency")
+
+
+    # Boxplot
+    sns.boxplot(x=df[column_name], color=color, ax=axes[1])
+    axes[1].set_title(f"Boxplot of {column_name}")
+    axes[1].set_xlabel(column_name)
+
+    # Add vertical lines for outlier boundaries in the boxplot only if values are provided
+    if out_left is not None:
+        axes[1].axvline(x=out_left, color='red', linestyle='-', linewidth=1)
+    if out_right is not None:
+        axes[1].axvline(x=out_right, color='red', linestyle='-', linewidth=1)
+
+    plt.tight_layout()
+    plt.show()
+
+
+# Cluster Profiling
+def cluster_profiling(df, cluster_labels, cluster_method_name, 
+                           figsize=(6, 8), cmap="BrBG", fmt=".2f"):
+    """
+    Plots a heatmap showing the cluster profiling based on feature means.
+
+    Args:
+    - df (DataFrame): The original dataset with numerical features.
+    - cluster_labels (array-like): Cluster labels for each data point.
+    - cluster_method_name (str): Name of the clustering method (used in the title).
+    - figsize (tuple): Size of the plot figure (default: (6, 8)).
+    - cmap (str): Colormap for the heatmap (default: "BrBG").
+    - fmt (str): String format for heatmap annotations (default: ".2f").
+    """
+    # Concatenate the cluster labels with the original data
+    df_concat = pd.concat([df, pd.Series(cluster_labels, name='labels', index=df.index)], axis=1)
+    
+    # Group by cluster labels and compute the mean for each feature
+    cluster_profile = df_concat.groupby('labels').mean().T
+    
+    # Create the plot
+    fig, ax = plt.subplots(figsize=figsize)
+
+    # Plot the heatmap
+    sns.heatmap(cluster_profile, center=0, annot=True, cmap=cmap, fmt=fmt, ax=ax)
+
+    # Set labels and title
+    ax.set_xlabel("Cluster Labels")
+    ax.set_title(f"Cluster Profiling:\n{cluster_method_name} Clustering")
+    
+    # Show the plot
+    plt.show()
+
+# Counts
+def plot_counts(labels):
+    """
+    Plots a bar chart showing the counts of each cluster label.
+
+    Parameters:
+    - labels (array-like): Cluster labels for data points.
+
+    """
+    label_counts = pd.Series(labels).value_counts()
+    plt.figure(figsize=(8, 6))
+    label_counts.plot(kind='bar', color='orange')
+    plt.title('Cluster Label Counts')
+    plt.xlabel('Cluster Label')
+    plt.ylabel('Count')
+    plt.xticks(rotation=0)
     plt.show()
