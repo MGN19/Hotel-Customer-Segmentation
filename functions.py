@@ -3,6 +3,35 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 
+# Data Exploration
+# Missing Value Analysis
+def missing_value_summary(dataframe):
+    """
+    Provides a summary of missing values in the DataFrame.
+    
+    Parameters:
+        dataframe: The DataFrame to analyze.
+    
+    Returns:
+        pd.DataFrame: Summary of columns with missing values, including unique values, NaN count, and percentage.
+    """
+    nan_columns = dataframe.columns[dataframe.isna().any()].tolist()
+    summary_data = []
+    
+    for column in nan_columns:
+        nan_number = dataframe[column].isna().sum()
+        nan_percentage = (nan_number / len(dataframe)) * 100
+        unique_values = dataframe[column].nunique()
+        summary_data.append({
+            'Unique Values': unique_values,
+            'NaN Values': nan_number,
+            'Percentage NaN': nan_percentage
+        })
+    
+    summary = pd.DataFrame(summary_data, index=nan_columns)
+    return summary
+
+# Data Visualization
 # Define the main color
 main_color = '#568789'
 
@@ -31,6 +60,7 @@ def histograms(df, columns, n_cols = 3):
 
     plt.tight_layout()
     plt.show()
+
 
 # Top-N Histogram
 def top_n_histogram(df, column, N=10, rotation=0):
@@ -203,3 +233,48 @@ def plot_counts(labels):
     plt.ylabel('Count')
     plt.xticks(rotation=0)
     plt.show()
+
+
+## Data Cleaning and Pre-processing
+# Function to apply the mode to columns with categorical data
+def mode(value):
+    # compute the mode
+    mode = value.mode()
+    if not mode.empty:
+        # returns the first mode, if there values that are equally frequent
+        return mode[0]
+    else:
+        # if no frequent value is found, return the first value
+        return value.iloc[0] 
+
+# Function to aggregate data based on 'DocIDHash','NameHash' and 'DistributionChannel'
+def aggregation(dataframe):
+    aggregation_rules = {
+        'Nationality': mode,
+        'Age': 'median',
+        'DaysSinceCreation': 'max',
+        'AverageLeadTime': 'mean',
+        'LodgingRevenue': 'sum',
+        'OtherRevenue': 'sum',
+        'BookingsCanceled': 'sum',
+        'BookingsNoShowed': 'sum',
+        'BookingsCheckedIn': 'sum',
+        'PersonsNights': 'sum',
+        'RoomNights': 'sum',
+        'MarketSegment': mode,
+        'SRHighFloor': mode,
+        'SRLowFloor': mode,
+        'SRAccessibleRoom': mode,
+        'SRMediumFloor': mode,
+        'SRBathtub': mode,
+        'SRShower': mode,
+        'SRCrib': mode,
+        'SRKingSizeBed': mode,
+        'SRTwinBed': mode,
+        'SRNearElevator': mode,
+        'SRAwayFromElevator': mode,
+        'SRNoAlcoholInMiniBar': mode,
+        'SRQuietRoom': mode
+    }
+    
+    return dataframe.groupby(['DocIDHash','NameHash','DistributionChannel']).agg(aggregation_rules).reset_index()
