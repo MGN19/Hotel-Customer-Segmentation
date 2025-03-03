@@ -184,6 +184,92 @@ def plot_distribution_and_boxplot(df, column_name, n_bins, out_left=None, out_ri
     plt.tight_layout()
     plt.show()
 
+def plot_multiple_distributions_and_boxplots(df, outliers_dict, color=main_color):
+    """
+    Plots histograms and box plots for multiple columns in the DataFrame with optional outlier boundaries.
+    In each row, there will be two histograms and two box plots from two different variables.
+
+    Parameters:
+        df (pd.DataFrame): The DataFrame containing the data.
+        outliers_dict (dict): Dictionary defining the outlier thresholds and bin settings for each numeric column.
+        color (str): Plot color for both histogram and boxplot.
+    """
+    # List of column names (sorted to match dictionary order)
+    columns = list(outliers_dict.keys())
+    
+    # Number of rows needed (two columns per row)
+    num_rows = len(columns) // 2 + len(columns) % 2  # Half the columns, rounded up
+
+    # Create subplots: two columns per row (histogram + boxplot for each column)
+    fig, axes = plt.subplots(num_rows, 4, figsize=(18, 3 * num_rows))
+
+    # Iterate over each pair of columns (two per row)
+    for i in range(0, len(columns), 2):
+        col1 = columns[i]
+        col2 = columns[i+1] if i+1 < len(columns) else None  # Check if there's an odd column
+
+        # Get the parameters for both columns (i-th and (i+1)-th columns)
+        params_col1 = outliers_dict[col1]
+        params_col2 = outliers_dict.get(col2, {'n_bins': 15, 'left_out': None, 'right_out': None})
+
+        # Plot for the first column (col1)
+        n_bins1 = params_col1["n_bins"]
+        out_left1 = params_col1["left_out"]
+        out_right1 = params_col1["right_out"]
+        
+        # Histogram for col1
+        sns.histplot(df[col1], kde=True, bins=n_bins1, color=color, ax=axes[i//2, 0])
+        axes[i//2, 0].set_title(f"Distribution of {col1}")
+        axes[i//2, 0].set_xlabel(col1)
+        axes[i//2, 0].set_ylabel("Frequency")
+        
+        # Boxplot for col1
+        # Boxplot for col1 with filled points for outliers
+        sns.boxplot(x=df[col1], color=color, ax=axes[i//2, 1])
+        axes[i//2, 1].set_title(f"Boxplot of {col1}")
+        axes[i//2, 1].set_xlabel(col1)
+
+        # Add vertical lines for outlier boundaries for col1
+        if out_left1 is not None:
+            axes[i//2, 1].axvline(x=out_left1, color='red', linestyle='-', linewidth=1, label=f'Left Outlier: {out_left1}')
+        if out_right1 is not None:
+            axes[i//2, 1].axvline(x=out_right1, color='red', linestyle='-', linewidth=1, label=f'Right Outlier: {out_right1}')
+        
+        # Add legend to the boxplot for col1 (if vertical lines are added)
+        if out_left1 is not None or out_right1 is not None:
+            axes[i//2, 1].legend()
+
+        # Plot for the second column (col2) if it exists
+        if col2:
+            n_bins2 = params_col2["n_bins"]
+            out_left2 = params_col2["left_out"]
+            out_right2 = params_col2["right_out"]
+            
+            # Histogram for col2
+            sns.histplot(df[col2], kde=True, bins=n_bins2, color=color, ax=axes[i//2, 2])
+            axes[i//2, 2].set_title(f"Distribution of {col2}")
+            axes[i//2, 2].set_xlabel(col2)
+            axes[i//2, 2].set_ylabel("Frequency")
+            
+            # Boxplot for col2
+            sns.boxplot(x=df[col2], color=color, ax=axes[i//2, 3])
+            axes[i//2, 3].set_title(f"Boxplot of {col2}")
+            axes[i//2, 3].set_xlabel(col2)
+
+            # Add vertical lines for outlier boundaries for col2
+            if out_left2 is not None:
+                axes[i//2, 3].axvline(x=out_left2, color='red', linestyle='-', linewidth=1, label=f'Left Outlier: {out_left2}')
+            if out_right2 is not None:
+                axes[i//2, 3].axvline(x=out_right2, color='red', linestyle='-', linewidth=1, label=f'Right Outlier: {out_right2}')
+            
+            # Add legend to the boxplot for col2 (if vertical lines are added)
+            if out_left2 is not None or out_right2 is not None:
+                axes[i//2, 3].legend()
+
+    # Adjust layout to prevent overlap
+    plt.tight_layout()
+    plt.show()
+
 
 # Cluster Profiling
 def cluster_profiling(df, cluster_labels, cluster_method_name, 
