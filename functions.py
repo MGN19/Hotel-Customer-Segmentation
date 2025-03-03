@@ -3,6 +3,10 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 
+# Define the main color
+main_color = '#1c5739'
+
+
 # Data Exploration
 # Missing Value Analysis
 def missing_value_summary(dataframe):
@@ -32,8 +36,6 @@ def missing_value_summary(dataframe):
     return summary
 
 # Data Visualization
-# Define the main color
-main_color = '#568789'
 
 # Histogram
 def histograms(df, columns, n_cols = 3):
@@ -182,6 +184,92 @@ def plot_distribution_and_boxplot(df, column_name, n_bins, out_left=None, out_ri
     plt.tight_layout()
     plt.show()
 
+def plot_multiple_distributions_and_boxplots(df, outliers_dict, color=main_color):
+    """
+    Plots histograms and box plots for multiple columns in the DataFrame with optional outlier boundaries.
+    In each row, there will be two histograms and two box plots from two different variables.
+
+    Parameters:
+        df (pd.DataFrame): The DataFrame containing the data.
+        outliers_dict (dict): Dictionary defining the outlier thresholds and bin settings for each numeric column.
+        color (str): Plot color for both histogram and boxplot.
+    """
+    # List of column names (sorted to match dictionary order)
+    columns = list(outliers_dict.keys())
+    
+    # Number of rows needed (two columns per row)
+    num_rows = len(columns) // 2 + len(columns) % 2  # Half the columns, rounded up
+
+    # Create subplots: two columns per row (histogram + boxplot for each column)
+    fig, axes = plt.subplots(num_rows, 4, figsize=(18, 3 * num_rows))
+
+    # Iterate over each pair of columns (two per row)
+    for i in range(0, len(columns), 2):
+        col1 = columns[i]
+        col2 = columns[i+1] if i+1 < len(columns) else None  # Check if there's an odd column
+
+        # Get the parameters for both columns (i-th and (i+1)-th columns)
+        params_col1 = outliers_dict[col1]
+        params_col2 = outliers_dict.get(col2, {'n_bins': 15, 'left_out': None, 'right_out': None})
+
+        # Plot for the first column (col1)
+        n_bins1 = params_col1["n_bins"]
+        out_left1 = params_col1["left_out"]
+        out_right1 = params_col1["right_out"]
+        
+        # Histogram for col1
+        sns.histplot(df[col1], kde=True, bins=n_bins1, color=color, ax=axes[i//2, 0])
+        axes[i//2, 0].set_title(f"Distribution of {col1}")
+        axes[i//2, 0].set_xlabel(col1)
+        axes[i//2, 0].set_ylabel("Frequency")
+        
+        # Boxplot for col1
+        # Boxplot for col1 with filled points for outliers
+        sns.boxplot(x=df[col1], color=color, ax=axes[i//2, 1])
+        axes[i//2, 1].set_title(f"Boxplot of {col1}")
+        axes[i//2, 1].set_xlabel(col1)
+
+        # Add vertical lines for outlier boundaries for col1
+        if out_left1 is not None:
+            axes[i//2, 1].axvline(x=out_left1, color='red', linestyle='-', linewidth=1, label=f'Left Outlier: {out_left1}')
+        if out_right1 is not None:
+            axes[i//2, 1].axvline(x=out_right1, color='red', linestyle='-', linewidth=1, label=f'Right Outlier: {out_right1}')
+        
+        # Add legend to the boxplot for col1 (if vertical lines are added)
+        if out_left1 is not None or out_right1 is not None:
+            axes[i//2, 1].legend()
+
+        # Plot for the second column (col2) if it exists
+        if col2:
+            n_bins2 = params_col2["n_bins"]
+            out_left2 = params_col2["left_out"]
+            out_right2 = params_col2["right_out"]
+            
+            # Histogram for col2
+            sns.histplot(df[col2], kde=True, bins=n_bins2, color=color, ax=axes[i//2, 2])
+            axes[i//2, 2].set_title(f"Distribution of {col2}")
+            axes[i//2, 2].set_xlabel(col2)
+            axes[i//2, 2].set_ylabel("Frequency")
+            
+            # Boxplot for col2
+            sns.boxplot(x=df[col2], color=color, ax=axes[i//2, 3])
+            axes[i//2, 3].set_title(f"Boxplot of {col2}")
+            axes[i//2, 3].set_xlabel(col2)
+
+            # Add vertical lines for outlier boundaries for col2
+            if out_left2 is not None:
+                axes[i//2, 3].axvline(x=out_left2, color='red', linestyle='-', linewidth=1, label=f'Left Outlier: {out_left2}')
+            if out_right2 is not None:
+                axes[i//2, 3].axvline(x=out_right2, color='red', linestyle='-', linewidth=1, label=f'Right Outlier: {out_right2}')
+            
+            # Add legend to the boxplot for col2 (if vertical lines are added)
+            if out_left2 is not None or out_right2 is not None:
+                axes[i//2, 3].legend()
+
+    # Adjust layout to prevent overlap
+    plt.tight_layout()
+    plt.show()
+
 
 # Cluster Profiling
 def cluster_profiling(df, cluster_labels, cluster_method_name, 
@@ -278,3 +366,54 @@ def aggregation(dataframe):
     }
     
     return dataframe.groupby(['DocIDHash','NameHash','DistributionChannel']).agg(aggregation_rules).reset_index()
+
+# Clusters Exploration
+def plot_cluster_sizes(df, cluster_col, color=main_color):
+    # Get the count of each cluster
+    cluster_counts = df[cluster_col].value_counts().sort_index()
+    
+    # Create the bar plot with the specified color
+    sns.barplot(x=cluster_counts.index, y=cluster_counts.values, color=color)
+    
+    # Add labels and title
+    plt.xlabel('Cluster')
+    plt.ylabel('Number of Samples')
+    plt.title('Cluster Sizes')
+    
+    # Show the plot
+    plt.show()
+
+def plot_cluster_profiling(df, cluster_column, cluster_method_name, 
+                           figsize=(6, 8), cmap="BrBG", fmt=".2f"):
+    """
+    Plots a heatmap showing the cluster profiling based on feature means.
+
+    Args:
+    - df (DataFrame): The original dataset with numerical features.
+    - cluster_column (str): The column name containing cluster labels for each data point.
+    - cluster_method_name (str): Name of the clustering method (used in the title).
+    - figsize (tuple): Size of the plot figure (default: (6, 8)).
+    - cmap (str): Colormap for the heatmap (default: "BrBG").
+    - fmt (str): String format for heatmap annotations (default: ".2f").
+    """
+    # Concatenate the cluster labels with the original data
+    df_concat = pd.concat([df, pd.Series(df[cluster_column], name='labels', index=df.index)], axis=1)
+    
+    # Filter for only numeric columns (excluding the cluster label)
+    numeric_df = df_concat.select_dtypes(include=['number'])
+    
+    # Group by cluster labels and compute the mean for each feature
+    cluster_profile = numeric_df.groupby(df_concat['labels']).mean().T
+    
+    # Create the plot
+    fig, ax = plt.subplots(figsize=figsize)
+
+    # Plot the heatmap
+    sns.heatmap(cluster_profile, center=0, annot=True, cmap=cmap, fmt=fmt, ax=ax)
+
+    # Set labels and title
+    ax.set_xlabel("Cluster Labels")
+    ax.set_title(f"Cluster Profiling:\n{cluster_method_name} Clustering")
+    
+    # Show the plot
+    plt.show()
