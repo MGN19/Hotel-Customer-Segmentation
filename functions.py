@@ -3,6 +3,10 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 
+# Define the main color
+main_color = '#1c5739'
+
+
 # Data Exploration
 # Missing Value Analysis
 def missing_value_summary(dataframe):
@@ -32,8 +36,6 @@ def missing_value_summary(dataframe):
     return summary
 
 # Data Visualization
-# Define the main color
-main_color = '#568789'
 
 # Histogram
 def histograms(df, columns, n_cols = 3):
@@ -278,3 +280,54 @@ def aggregation(dataframe):
     }
     
     return dataframe.groupby(['DocIDHash','NameHash','DistributionChannel']).agg(aggregation_rules).reset_index()
+
+# Clusters Exploration
+def plot_cluster_sizes(df, cluster_col, color=main_color):
+    # Get the count of each cluster
+    cluster_counts = df[cluster_col].value_counts().sort_index()
+    
+    # Create the bar plot with the specified color
+    sns.barplot(x=cluster_counts.index, y=cluster_counts.values, color=color)
+    
+    # Add labels and title
+    plt.xlabel('Cluster')
+    plt.ylabel('Number of Samples')
+    plt.title('Cluster Sizes')
+    
+    # Show the plot
+    plt.show()
+
+def plot_cluster_profiling(df, cluster_column, cluster_method_name, 
+                           figsize=(6, 8), cmap="BrBG", fmt=".2f"):
+    """
+    Plots a heatmap showing the cluster profiling based on feature means.
+
+    Args:
+    - df (DataFrame): The original dataset with numerical features.
+    - cluster_column (str): The column name containing cluster labels for each data point.
+    - cluster_method_name (str): Name of the clustering method (used in the title).
+    - figsize (tuple): Size of the plot figure (default: (6, 8)).
+    - cmap (str): Colormap for the heatmap (default: "BrBG").
+    - fmt (str): String format for heatmap annotations (default: ".2f").
+    """
+    # Concatenate the cluster labels with the original data
+    df_concat = pd.concat([df, pd.Series(df[cluster_column], name='labels', index=df.index)], axis=1)
+    
+    # Filter for only numeric columns (excluding the cluster label)
+    numeric_df = df_concat.select_dtypes(include=['number'])
+    
+    # Group by cluster labels and compute the mean for each feature
+    cluster_profile = numeric_df.groupby(df_concat['labels']).mean().T
+    
+    # Create the plot
+    fig, ax = plt.subplots(figsize=figsize)
+
+    # Plot the heatmap
+    sns.heatmap(cluster_profile, center=0, annot=True, cmap=cmap, fmt=fmt, ax=ax)
+
+    # Set labels and title
+    ax.set_xlabel("Cluster Labels")
+    ax.set_title(f"Cluster Profiling:\n{cluster_method_name} Clustering")
+    
+    # Show the plot
+    plt.show()
