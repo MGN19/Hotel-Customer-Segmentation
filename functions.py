@@ -95,7 +95,7 @@ def unique_histogram(df, column, rotation=0):
     df[column] = pd.Categorical(df[column], categories=category_counts.index, ordered=True)
     
     # Plot the histogram with sorted categories
-    sns.histplot(df[column], discrete=True, color='main_color', kde=False)
+    sns.histplot(df[column], discrete=True, color=main_color, kde=False)
     
     plt.title(f'Histogram of {column}', fontsize=14)
     plt.xlabel(column)
