@@ -143,7 +143,7 @@ def plot_crosstab(df, column1, column2, annot_kws={"rotation": 45}):
 
     # Plot the heatmap
     plt.figure(figsize=(10, 8))
-    sns.heatmap(crosstab, annot=True, fmt="d", cmap='Oranges', annot_kws=annot_kws)
+    sns.heatmap(crosstab, annot=True, fmt="d", cmap='Greens', annot_kws=annot_kws)
     plt.title(f'{column1} vs {column2}')
     plt.show()
 
@@ -315,7 +315,7 @@ def plot_counts(labels):
     """
     label_counts = pd.Series(labels).value_counts()
     plt.figure(figsize=(8, 6))
-    label_counts.plot(kind='bar', color='orange')
+    label_counts.plot(kind='bar', color=main_color)
     plt.title('Cluster Label Counts')
     plt.xlabel('Cluster Label')
     plt.ylabel('Count')
