@@ -51,7 +51,7 @@ def histograms(df, columns, n_cols = 3):
     # Plot histograms for each column 
     for i, col in enumerate(columns):
         ax = axes[i]
-        ax.hist(df[col].dropna(), edgecolor='black', color='orange')
+        ax.hist(df[col].dropna(), edgecolor='black', color=main_color)
         ax.set_title(f'Histogram of {col}', fontsize=10)
         ax.set_xlabel(col)
         ax.set_ylabel('Frequency')
@@ -76,7 +76,7 @@ def top_n_histogram(df, column, N=10, rotation=0):
     filtered_df[column] = pd.Categorical(filtered_df[column], categories=top_categories.index, ordered=True)
     
     # Plot
-    sns.histplot(filtered_df[column], discrete=True, color='orange', kde=False)
+    sns.histplot(filtered_df[column], discrete=True, color=main_color, kde=False)
     
     plt.title(f'Top {N} Histogram of {column}', fontsize=14)
     plt.xlabel(column)
@@ -123,7 +123,7 @@ def boxplots(df, categorical, continuous, n_cols=3):
     for cat in categorical:
         for cont in continuous:
             if plot_idx < len(axes):
-                sns.boxplot(x=cat, y=cont, data=df, palette='Oranges', ax=axes[plot_idx])
+                sns.boxplot(x=cat, y=cont, data=df, palette='Greens', ax=axes[plot_idx])
                 axes[plot_idx].set_title(f'{cat} vs {cont}')
                 axes[plot_idx].tick_params(axis='x', rotation=45)
                 plot_idx += 1
