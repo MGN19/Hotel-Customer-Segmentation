@@ -51,7 +51,7 @@ def histograms(df, columns, n_cols = 3):
     # Plot histograms for each column 
     for i, col in enumerate(columns):
         ax = axes[i]
-        ax.hist(df[col].dropna(), edgecolor='black', color='orange')
+        ax.hist(df[col].dropna(), edgecolor='black', color=main_color)
         ax.set_title(f'Histogram of {col}', fontsize=10)
         ax.set_xlabel(col)
         ax.set_ylabel('Frequency')
@@ -76,7 +76,7 @@ def top_n_histogram(df, column, N=10, rotation=0):
     filtered_df[column] = pd.Categorical(filtered_df[column], categories=top_categories.index, ordered=True)
     
     # Plot
-    sns.histplot(filtered_df[column], discrete=True, color='orange', kde=False)
+    sns.histplot(filtered_df[column], discrete=True, color=main_color, kde=False)
     
     plt.title(f'Top {N} Histogram of {column}', fontsize=14)
     plt.xlabel(column)
@@ -95,7 +95,7 @@ def unique_histogram(df, column, rotation=0):
     df[column] = pd.Categorical(df[column], categories=category_counts.index, ordered=True)
     
     # Plot the histogram with sorted categories
-    sns.histplot(df[column], discrete=True, color='orange', kde=False)
+    sns.histplot(df[column], discrete=True, color=main_color, kde=False)
     
     plt.title(f'Histogram of {column}', fontsize=14)
     plt.xlabel(column)
@@ -123,7 +123,7 @@ def boxplots(df, categorical, continuous, n_cols=3):
     for cat in categorical:
         for cont in continuous:
             if plot_idx < len(axes):
-                sns.boxplot(x=cat, y=cont, data=df, palette='Oranges', ax=axes[plot_idx])
+                sns.boxplot(x=cat, y=cont, data=df, palette='Greens', ax=axes[plot_idx])
                 axes[plot_idx].set_title(f'{cat} vs {cont}')
                 axes[plot_idx].tick_params(axis='x', rotation=45)
                 plot_idx += 1
@@ -143,7 +143,7 @@ def plot_crosstab(df, column1, column2, annot_kws={"rotation": 45}):
 
     # Plot the heatmap
     plt.figure(figsize=(10, 8))
-    sns.heatmap(crosstab, annot=True, fmt="d", cmap='Oranges', annot_kws=annot_kws)
+    sns.heatmap(crosstab, annot=True, fmt="d", cmap='Greens', annot_kws=annot_kws)
     plt.title(f'{column1} vs {column2}')
     plt.show()
 
@@ -315,7 +315,7 @@ def plot_counts(labels):
     """
     label_counts = pd.Series(labels).value_counts()
     plt.figure(figsize=(8, 6))
-    label_counts.plot(kind='bar', color='orange')
+    label_counts.plot(kind='bar', color=main_color)
     plt.title('Cluster Label Counts')
     plt.xlabel('Cluster Label')
     plt.ylabel('Count')
