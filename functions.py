@@ -9,7 +9,7 @@ import plotly.io as pio
 
 
 # Define the main color
-main_color = '#07575B'
+main_color = '#008585'
 
 
 # Data Exploration
