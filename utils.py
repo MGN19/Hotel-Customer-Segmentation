@@ -48,8 +48,7 @@ plot_params_dict = {
     ('LodgingRevenue', 'BookingsCheckedIn'): {
         'color': f.main_color,
         'ellipses': [
-            {'center': (7000, 26), 'width': 700, 'height': 10, 'angle':0},
-            {'center': (9050, 13), 'width': 250, 'height': 2, 'angle':0}
+            {'center': (7000, 26), 'width': 700, 'height': 10, 'angle':0}
         ]
     },
     ('LodgingRevenue', 'RetentionRate'): {
