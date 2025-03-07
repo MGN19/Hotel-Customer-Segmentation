@@ -5,6 +5,8 @@ import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import math
+import plotly.io as pio
+
 
 # Define the main color
 main_color = '#1c5739'
@@ -316,7 +318,10 @@ def scatterplot_outliers(df, plot_params_dict, pair, fig, row, col, color):
             line=dict(color='red')
         ), row=row, col=col)
 
-# Function to create subplots dynamically
+def chunk_dict(d, chunk_size=6):
+    items = list(d.items())
+    return [dict(items[i:i + chunk_size]) for i in range(0, len(items), chunk_size)]
+
 def multiple_scatterplots_outliers(df, main_color, plot_params_dict):
     pairs = list(plot_params_dict.keys())
     num_pairs = len(pairs)
@@ -348,7 +353,6 @@ def multiple_scatterplots_outliers(df, main_color, plot_params_dict):
     )
 
     fig.show()
-
 
 # Cluster Profiling
 def cluster_profiling(df, cluster_labels, cluster_method_name, 
