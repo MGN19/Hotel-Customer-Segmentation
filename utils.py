@@ -129,7 +129,7 @@ plot_params_dict = {
     ('RoomNights', 'TotalRevenue'): {
         'color': f.main_color,
         'ellipses': [
-            {'center': (40, 9852), 'width': 1, 'height': 300, 'angle':0}
+            {'center': (57, 7000), 'width': 4, 'height': 1500, 'angle':0}
         ]
     },
     ('RoomNights', 'RetentionRate'): {
@@ -171,4 +171,6 @@ plot_params_dict = {
 }
 
 # Index of multivariate outliers
-multivariate_outliers = [94231, ]
+multivariate_outliers = [94231, 2133, 64309, 65589, 3038, 97232, 17576, 36848, 92877, 97232, 64309,
+                          3038, 65589, 17576, 60055, 92061, 92877, 92877, 72942, 92061, 24069, 17576,
+                            72942, 92061, 3038, 64309, 65589, 17576, 3038, 65589, 64309, 50584, 27886]

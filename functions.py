@@ -322,7 +322,7 @@ def chunk_dict(d, chunk_size=6):
     items = list(d.items())
     return [dict(items[i:i + chunk_size]) for i in range(0, len(items), chunk_size)]
 
-def multiple_scatterplots_outliers(df, main_color, plot_params_dict, save_path=None):
+def multiple_scatterplots_outliers(df, main_color, plot_params_dict):
     pairs = list(plot_params_dict.keys())
     num_pairs = len(pairs)
     num_cols = 3
@@ -353,11 +353,6 @@ def multiple_scatterplots_outliers(df, main_color, plot_params_dict, save_path=N
     )
 
     fig.show()
-
-    # Save as JPEG if save_path is provided
-    if save_path:
-        fig.write_image(save_path, format='jpeg')
-
 
 # Cluster Profiling
 def cluster_profiling(df, cluster_labels, cluster_method_name, 
