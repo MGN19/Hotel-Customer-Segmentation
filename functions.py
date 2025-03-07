@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import math
 
 # Define the main color
 main_color = '#1c5739'
@@ -274,36 +275,32 @@ def plot_multiple_distributions_and_boxplots(df, outliers_dict, color=main_color
 
 # Function to generate ellipse points
 def generate_ellipse(center, width, height, angle, num_points=100):
-    center_x, center_y = center  # Unpack the center tuple
-    # Generate the ellipse points using parametric equation of ellipse
+    center_x, center_y = center
     theta = np.linspace(0, 2 * np.pi, num_points)
     ellipse_x = center_x + width * np.cos(theta) * np.cos(np.radians(angle)) - height * np.sin(theta) * np.sin(np.radians(angle))
     ellipse_y = center_y + width * np.cos(theta) * np.sin(np.radians(angle)) + height * np.sin(theta) * np.cos(np.radians(angle))
-    
     return ellipse_x, ellipse_y
 
-# Function to generate the scatter plot with ellipses for each pair
-def scatterplot_outliers(df, pair, fig, col, color):
-    # Create custom hover text
+# Function to add scatter plot with ellipses to the figure
+def scatterplot_outliers(df, plot_params_dict, pair, fig, row, col, color):
     hover_text = [
-        f"Index: {idx}<br>{pair[0]}: {df[pair[0]][idx]}<br>{pair[1]}: {df[pair[1]][idx]}"
-        for idx in df.index
+    f"Index: {idx}<br>{pair[0]}: {df[pair[0]][idx]}<br>{pair[1]}: {df[pair[1]][idx]}<br>FlagOutlier: {df['FlagOutlier'][idx]}"
+    for idx in df.index
     ]
     
-    # Add scatter trace to the specified subplot column (col) with the specific color
+    # Scatter plot
     fig.add_trace(go.Scatter(
-        x=df[pair[0]],  # Use the column 'pair[0]' from the dataframe
-        y=df[pair[1]],  # Use the column 'pair[1]' from the dataframe
-        mode='markers', 
+        x=df[pair[0]],
+        y=df[pair[1]],
+        mode='markers',
         name='Data Points',
-        text=hover_text,  # Set custom hover text
-        hoverinfo='text',  # Display only the custom text
-        marker=dict(color=color)  # Set the color for the scatter plot
-    ), row=1, col=col)  # Specify the subplot position (row=1, col=col)
+        text=hover_text,
+        hoverinfo='text',
+        marker=dict(color=color)
+    ), row=row, col=col)
 
-    # Add ellipses for the given pair from plot_params_dict
+    # Ellipses
     for ellipse_params in plot_params_dict.get(pair, {}).get('ellipses', []):
-        # Generate the ellipse points using the function
         ellipse_x, ellipse_y = generate_ellipse(
             ellipse_params['center'],
             ellipse_params['width'],
@@ -311,41 +308,46 @@ def scatterplot_outliers(df, pair, fig, col, color):
             ellipse_params['angle']
         )
 
-        # Add ellipse as a shape in the figure
         fig.add_trace(go.Scatter(
-            x=ellipse_x, 
-            y=ellipse_y, 
-            mode='lines', 
-            name='Ellipse', 
+            x=ellipse_x,
+            y=ellipse_y,
+            mode='lines',
+            name='Ellipse',
             line=dict(color='red')
-        ), row=1, col=col)  # Specify the subplot position (row=1, col=col)
+        ), row=row, col=col)
 
-# Function to create subplots with scatter plots and ellipses
-def create_subplots(df, main_color, plot_params_dict):
-    # Create subplots with 1 row and 3 columns
-    fig = make_subplots(rows=1, cols=3)
+# Function to create subplots dynamically
+def multiple_scatterplots_outliers(df, main_color, plot_params_dict):
+    pairs = list(plot_params_dict.keys())
+    num_pairs = len(pairs)
+    num_cols = 3
+    num_rows = math.ceil(num_pairs / num_cols)
 
-    # Define pairs to plot (use the first 3 pairs)
-    pairs = list(plot_params_dict.keys())[:3]
+    # Create subplots
+    fig = make_subplots(
+        rows=num_rows, 
+        cols=num_cols, 
+        subplot_titles=[f"{pair[0]} vs {pair[1]}" for pair in pairs]
+    )
 
-    # For each pair, create a scatter plot with ellipses in the corresponding subplot
+    # Add each scatter plot to the figure
     for i, pair in enumerate(pairs):
-        color = plot_params_dict[pair].get('color', main_color)  # Default color if not defined
-        scatterplot_outliers(df, pair, fig, col=i+1, color=color)
+        row = (i // num_cols) + 1
+        col = (i % num_cols) + 1
+        color = plot_params_dict[pair].get('color', main_color)
+        scatterplot_outliers(df, plot_params_dict, pair, fig, row=row, col=col, color=color)
 
-    # Update layout for the subplots
+    # Update layout
     fig.update_layout(
-        title="Scatter Plots with Ellipses", 
-        showlegend=True,
-        height=600,
+        title="Scatter Plots to Identify Outliers",
+        showlegend=False,
+        height=300 * num_rows,
         width=1200,
         title_x=0.5,
         title_y=0.95
     )
 
-    # Show the subplot figure
     fig.show()
-
 
 
 # Cluster Profiling
