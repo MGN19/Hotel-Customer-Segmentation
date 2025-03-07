@@ -316,6 +316,10 @@ def scatterplot_outliers(df, plot_params_dict, pair, fig, row, col, color):
             line=dict(color='red')
         ), row=row, col=col)
 
+def chunk_dict(d, chunk_size=6):
+    items = list(d.items())
+    return [dict(items[i:i + chunk_size]) for i in range(0, len(items), chunk_size)]
+
 # Function to create subplots dynamically
 def multiple_scatterplots_outliers(df, main_color, plot_params_dict):
     pairs = list(plot_params_dict.keys())

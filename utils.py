@@ -170,3 +170,6 @@ plot_params_dict = {
         ]
     }
 }
+
+# Index of multivariate outliers
+multivariate_outliers = [94231, ]
