@@ -6,10 +6,13 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import math
 import plotly.io as pio
+import matplotlib.colors as mcolors
 
 
 # Define the main color
 main_color = '#068282'
+# Custom colormap
+custom_cmap = mcolors.LinearSegmentedColormap.from_list('custom_cmap', ['#d1e4da', '#068282'])
 
 
 # Data Exploration
@@ -128,7 +131,7 @@ def boxplots(df, categorical, continuous, n_cols=3):
     for cat in categorical:
         for cont in continuous:
             if plot_idx < len(axes):
-                sns.boxplot(x=cat, y=cont, data=df, palette='Greens', ax=axes[plot_idx])
+                sns.boxplot(x=cat, y=cont, data=df, palette=custom_cmap, ax=axes[plot_idx])
                 axes[plot_idx].set_title(f'{cat} vs {cont}')
                 axes[plot_idx].tick_params(axis='x', rotation=45)
                 plot_idx += 1
@@ -148,7 +151,7 @@ def plot_crosstab(df, column1, column2, annot_kws={"rotation": 45}):
 
     # Plot the heatmap
     plt.figure(figsize=(10, 8))
-    sns.heatmap(crosstab, annot=True, fmt="d", cmap='Greens', annot_kws=annot_kws)
+    sns.heatmap(crosstab, annot=True, fmt="d", cmap=custom_cmap, annot_kws=annot_kws)
     plt.title(f'{column1} vs {column2}')
     plt.show()
 
@@ -354,39 +357,6 @@ def multiple_scatterplots_outliers(df, main_color, plot_params_dict):
 
     fig.show()
 
-# Cluster Profiling
-def cluster_profiling(df, cluster_labels, cluster_method_name, 
-                           figsize=(6, 8), cmap="BrBG", fmt=".2f"):
-    """
-    Plots a heatmap showing the cluster profiling based on feature means.
-
-    Args:
-    - df (DataFrame): The original dataset with numerical features.
-    - cluster_labels (array-like): Cluster labels for each data point.
-    - cluster_method_name (str): Name of the clustering method (used in the title).
-    - figsize (tuple): Size of the plot figure (default: (6, 8)).
-    - cmap (str): Colormap for the heatmap (default: "BrBG").
-    - fmt (str): String format for heatmap annotations (default: ".2f").
-    """
-    # Concatenate the cluster labels with the original data
-    df_concat = pd.concat([df, pd.Series(cluster_labels, name='labels', index=df.index)], axis=1)
-    
-    # Group by cluster labels and compute the mean for each feature
-    cluster_profile = df_concat.groupby('labels').mean().T
-    
-    # Create the plot
-    fig, ax = plt.subplots(figsize=figsize)
-
-    # Plot the heatmap
-    sns.heatmap(cluster_profile, center=0, annot=True, cmap=cmap, fmt=fmt, ax=ax)
-
-    # Set labels and title
-    ax.set_xlabel("Cluster Labels")
-    ax.set_title(f"Cluster Profiling:\n{cluster_method_name} Clustering")
-    
-    # Show the plot
-    plt.show()
-
 # Counts
 def plot_counts(labels):
     """
@@ -421,7 +391,6 @@ def mode(value):
 # Function to aggregate data based on 'DocIDHash','NameHash' and 'DistributionChannel'
 def aggregation(dataframe):
     aggregation_rules = {
-        'Nationality': mode,
         'Age': 'median',
         'DaysSinceCreation': 'max',
         'AverageLeadTime': 'mean',
@@ -432,6 +401,7 @@ def aggregation(dataframe):
         'BookingsCheckedIn': 'sum',
         'PersonsNights': 'sum',
         'RoomNights': 'sum',
+        'DistributionChannel': mode,
         'MarketSegment': mode,
         'SRHighFloor': mode,
         'SRLowFloor': mode,
@@ -448,7 +418,7 @@ def aggregation(dataframe):
         'SRQuietRoom': mode
     }
     
-    return dataframe.groupby(['DocIDHash','NameHash','DistributionChannel']).agg(aggregation_rules).reset_index()
+    return dataframe.groupby(['DocIDHash','NameHash','Nationality']).agg(aggregation_rules).reset_index()
 
 # Clusters Exploration
 def plot_cluster_sizes(df, cluster_col, color=main_color):
@@ -466,33 +436,39 @@ def plot_cluster_sizes(df, cluster_col, color=main_color):
     # Show the plot
     plt.show()
 
-def plot_cluster_profiling(df, cluster_column, cluster_method_name, 
-                           figsize=(6, 8), cmap="BrBG", fmt=".2f"):
+# Cluster Profiling
+def plot_cluster_profiling(df, cluster_labels, cluster_method_name, 
+                           figsize=(6, 8), cmap="BrBG", fmt=".2f", annot_size=10):
     """
     Plots a heatmap showing the cluster profiling based on feature means.
 
     Args:
     - df (DataFrame): The original dataset with numerical features.
-    - cluster_column (str): The column name containing cluster labels for each data point.
+    - cluster_labels (Series or array): Cluster labels corresponding to each data point.
     - cluster_method_name (str): Name of the clustering method (used in the title).
     - figsize (tuple): Size of the plot figure (default: (6, 8)).
     - cmap (str): Colormap for the heatmap (default: "BrBG").
     - fmt (str): String format for heatmap annotations (default: ".2f").
+    - annot_size (int): Font size of annotations in the heatmap (default: 10).
     """
+    # Ensure cluster_labels is a Series
+    cluster_labels = pd.Series(cluster_labels, name="labels", index=df.index)
+    
     # Concatenate the cluster labels with the original data
-    df_concat = pd.concat([df, pd.Series(df[cluster_column], name='labels', index=df.index)], axis=1)
+    df_concat = pd.concat([df, cluster_labels], axis=1)
     
     # Filter for only numeric columns (excluding the cluster label)
     numeric_df = df_concat.select_dtypes(include=['number'])
     
     # Group by cluster labels and compute the mean for each feature
-    cluster_profile = numeric_df.groupby(df_concat['labels']).mean().T
+    cluster_profile = numeric_df.groupby("labels").mean().T
     
     # Create the plot
     fig, ax = plt.subplots(figsize=figsize)
 
-    # Plot the heatmap
-    sns.heatmap(cluster_profile, center=0, annot=True, cmap=cmap, fmt=fmt, ax=ax)
+    # Plot the heatmap with custom annotation size
+    sns.heatmap(cluster_profile, center=0, annot=True, cmap=cmap, fmt=fmt, ax=ax, 
+                annot_kws={"size": annot_size})
 
     # Set labels and title
     ax.set_xlabel("Cluster Labels")
@@ -500,7 +476,6 @@ def plot_cluster_profiling(df, cluster_column, cluster_method_name,
     
     # Show the plot
     plt.show()
-
 
 def plot_dim_reduction(embedding, targets=None, 
                        technique='UMAP',
