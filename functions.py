@@ -466,33 +466,39 @@ def plot_cluster_sizes(df, cluster_col, color=main_color):
     # Show the plot
     plt.show()
 
-def plot_cluster_profiling(df, cluster_column, cluster_method_name, 
-                           figsize=(6, 8), cmap="BrBG", fmt=".2f"):
+# Cluster Profiling
+def plot_cluster_profiling(df, cluster_labels, cluster_method_name, 
+                           figsize=(6, 8), cmap="BrBG", fmt=".2f", annot_size=10):
     """
     Plots a heatmap showing the cluster profiling based on feature means.
 
     Args:
     - df (DataFrame): The original dataset with numerical features.
-    - cluster_column (str): The column name containing cluster labels for each data point.
+    - cluster_labels (Series or array): Cluster labels corresponding to each data point.
     - cluster_method_name (str): Name of the clustering method (used in the title).
     - figsize (tuple): Size of the plot figure (default: (6, 8)).
     - cmap (str): Colormap for the heatmap (default: "BrBG").
     - fmt (str): String format for heatmap annotations (default: ".2f").
+    - annot_size (int): Font size of annotations in the heatmap (default: 10).
     """
+    # Ensure cluster_labels is a Series
+    cluster_labels = pd.Series(cluster_labels, name="labels", index=df.index)
+    
     # Concatenate the cluster labels with the original data
-    df_concat = pd.concat([df, pd.Series(df[cluster_column], name='labels', index=df.index)], axis=1)
+    df_concat = pd.concat([df, cluster_labels], axis=1)
     
     # Filter for only numeric columns (excluding the cluster label)
     numeric_df = df_concat.select_dtypes(include=['number'])
     
     # Group by cluster labels and compute the mean for each feature
-    cluster_profile = numeric_df.groupby(df_concat['labels']).mean().T
+    cluster_profile = numeric_df.groupby("labels").mean().T
     
     # Create the plot
     fig, ax = plt.subplots(figsize=figsize)
 
-    # Plot the heatmap
-    sns.heatmap(cluster_profile, center=0, annot=True, cmap=cmap, fmt=fmt, ax=ax)
+    # Plot the heatmap with custom annotation size
+    sns.heatmap(cluster_profile, center=0, annot=True, cmap=cmap, fmt=fmt, ax=ax, 
+                annot_kws={"size": annot_size})
 
     # Set labels and title
     ax.set_xlabel("Cluster Labels")
