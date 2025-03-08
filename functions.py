@@ -500,3 +500,52 @@ def plot_cluster_profiling(df, cluster_column, cluster_method_name,
     
     # Show the plot
     plt.show()
+
+
+def plot_dim_reduction(embedding, targets=None, 
+                       technique='UMAP',
+                       figsize=(10, 7)):
+
+    """
+    Plots a 2D representation of high-dimensional data.
+
+    Parameters:
+    - embedding (array-like): 2D array of transformed data.
+    - targets (array-like): Cluster labels for data points (optional).
+    - technique (str): Dimensionality reduction technique name (default: 'UMAP').
+    - figsize (tuple): Figure size (default: (10, 7)).
+    """
+    plt.figure(figsize=figsize)
+
+    if targets is not None:
+        # Ensure targets are in integer format for color mapping
+        scatter = plt.scatter(
+            embedding[:, 0], 
+            embedding[:, 1], 
+            c=np.array(targets).astype(int), 
+            cmap='tab10'
+        )
+
+        
+        # Create a legend with the class labels and corresponding colors from the scatter plot
+        labels = np.unique(targets)
+        handles = []
+        
+        # Manually create handles using the same colormap as scatter
+        for i, label in enumerate(labels):
+            color = scatter.cmap(scatter.norm(i))  
+            handles.append(plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10, label=label))
+
+        plt.legend(handles=handles, title='Clusters')
+
+    else:
+        plt.scatter(embedding[:, 0], embedding[:, 1], s=5)
+
+    if technique == 'UMAP':
+        plt.title('UMAP Projection')
+    elif technique == 't-SNE':
+        plt.title('t-SNE Projection')
+    else:
+        plt.title(f'{technique} Projection')
+
+    plt.show()
