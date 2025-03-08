@@ -6,10 +6,13 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import math
 import plotly.io as pio
+import matplotlib.colors as mcolors
 
 
 # Define the main color
 main_color = '#068282'
+# Custom colormap
+custom_cmap = mcolors.LinearSegmentedColormap.from_list('custom_cmap', ['#d1e4da', '#068282'])
 
 
 # Data Exploration
@@ -128,7 +131,7 @@ def boxplots(df, categorical, continuous, n_cols=3):
     for cat in categorical:
         for cont in continuous:
             if plot_idx < len(axes):
-                sns.boxplot(x=cat, y=cont, data=df, palette='Greens', ax=axes[plot_idx])
+                sns.boxplot(x=cat, y=cont, data=df, palette=custom_cmap, ax=axes[plot_idx])
                 axes[plot_idx].set_title(f'{cat} vs {cont}')
                 axes[plot_idx].tick_params(axis='x', rotation=45)
                 plot_idx += 1
@@ -148,7 +151,7 @@ def plot_crosstab(df, column1, column2, annot_kws={"rotation": 45}):
 
     # Plot the heatmap
     plt.figure(figsize=(10, 8))
-    sns.heatmap(crosstab, annot=True, fmt="d", cmap='Greens', annot_kws=annot_kws)
+    sns.heatmap(crosstab, annot=True, fmt="d", cmap=custom_cmap, annot_kws=annot_kws)
     plt.title(f'{column1} vs {column2}')
     plt.show()
 
