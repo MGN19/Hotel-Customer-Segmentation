@@ -10,13 +10,13 @@ outliers_dict = {'Age': {"n_bins": 15, "left_out": None, "right_out": None},
                  'BookingsNoShowed': {"n_bins": 15, "left_out": None, "right_out": 2.5},
                  'BookingsCheckedIn': {"n_bins": 15, "left_out": None, "right_out": 45},
                  'PersonsNights': {"n_bins": 15, "left_out": None, "right_out": 80},
-                 'RoomNights': {"n_bins": 15, "left_out": None, "right_out": 75},
+                 'RoomNights': {"n_bins": 15, "left_out": None, "right_out": 80},
                  'TotalRevenue': {"n_bins": 15, "left_out": None, "right_out": 9250},
                  'LTV': {"n_bins": 15, "left_out": None, "right_out": 85},
-                 'RetentionRate': {"n_bins": 10, "left_out": 0.3, "right_out": None},
-                 'RevenuePerNight': {"n_bins": 15, "left_out": None, "right_out": 1200},
-                 'RevenuePerPersonNight': {"n_bins": 15, "left_out": None, "right_out": 1000},
-                 'PreferenceScore': {"n_bins": 15, "left_out": None, "right_out": 3.5}}
+                 'RetentionRate': {"n_bins": 10, "left_out": 0.65, "right_out": None},
+                 'RevenuePerNight': {"n_bins": 15, "left_out": None, "right_out": 2500},
+                 'RevenuePerPersonNight': {"n_bins": 15, "left_out": None, "right_out": 1250},
+}
 
 # Dictionary defining outlier ellipses
 plot_params_dict = {
