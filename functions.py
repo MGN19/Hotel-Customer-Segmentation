@@ -466,8 +466,9 @@ def plot_cluster_sizes(df, cluster_col, color=main_color):
     # Show the plot
     plt.show()
 
+# Cluster Profiling
 def plot_cluster_profiling(df, cluster_column, cluster_method_name, 
-                           figsize=(6, 8), cmap="BrBG", fmt=".2f"):
+                           figsize=(6, 8), cmap="BrBG", fmt=".2f", annot_size=10):
     """
     Plots a heatmap showing the cluster profiling based on feature means.
 
@@ -478,6 +479,7 @@ def plot_cluster_profiling(df, cluster_column, cluster_method_name,
     - figsize (tuple): Size of the plot figure (default: (6, 8)).
     - cmap (str): Colormap for the heatmap (default: "BrBG").
     - fmt (str): String format for heatmap annotations (default: ".2f").
+    - annot_size (int): Font size of annotations in the heatmap (default: 10).
     """
     # Concatenate the cluster labels with the original data
     df_concat = pd.concat([df, pd.Series(df[cluster_column], name='labels', index=df.index)], axis=1)
@@ -491,8 +493,9 @@ def plot_cluster_profiling(df, cluster_column, cluster_method_name,
     # Create the plot
     fig, ax = plt.subplots(figsize=figsize)
 
-    # Plot the heatmap
-    sns.heatmap(cluster_profile, center=0, annot=True, cmap=cmap, fmt=fmt, ax=ax)
+    # Plot the heatmap with custom annotation size
+    sns.heatmap(cluster_profile, center=0, annot=True, cmap=cmap, fmt=fmt, ax=ax, 
+                annot_kws={"size": annot_size})
 
     # Set labels and title
     ax.set_xlabel("Cluster Labels")
