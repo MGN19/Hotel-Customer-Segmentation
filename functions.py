@@ -391,7 +391,6 @@ def mode(value):
 # Function to aggregate data based on 'DocIDHash','NameHash' and 'DistributionChannel'
 def aggregation(dataframe):
     aggregation_rules = {
-        'Nationality': mode,
         'Age': 'median',
         'DaysSinceCreation': 'max',
         'AverageLeadTime': 'mean',
@@ -402,6 +401,7 @@ def aggregation(dataframe):
         'BookingsCheckedIn': 'sum',
         'PersonsNights': 'sum',
         'RoomNights': 'sum',
+        'DistributionChannel': mode,
         'MarketSegment': mode,
         'SRHighFloor': mode,
         'SRLowFloor': mode,
@@ -418,7 +418,7 @@ def aggregation(dataframe):
         'SRQuietRoom': mode
     }
     
-    return dataframe.groupby(['DocIDHash','NameHash','DistributionChannel']).agg(aggregation_rules).reset_index()
+    return dataframe.groupby(['DocIDHash','NameHash','Nationality']).agg(aggregation_rules).reset_index()
 
 # Clusters Exploration
 def plot_cluster_sizes(df, cluster_col, color=main_color):
