@@ -92,7 +92,7 @@ def top_n_histogram(df, column, N=10, rotation=0):
     plt.xticks(rotation=rotation)
     plt.show()
 
-# Unique Histogram
+# Histogram
 def unique_histogram(df, column, rotation=0):
     plt.figure(figsize=(10, 6))
 
@@ -109,6 +109,26 @@ def unique_histogram(df, column, rotation=0):
     plt.xlabel(column)
     plt.ylabel('Frequency')
     plt.xticks(rotation=rotation)
+    plt.show()
+
+# Bar plot
+def binary_bar_plot(df, column):
+    plt.figure(figsize=(8, 6))
+    
+    # Count the occurrences of each category
+    category_counts = df[column].value_counts()
+    
+    # Create a bar plot
+    sns.barplot(x=category_counts.index, y=category_counts.values, color=main_color)
+
+    plt.title(f'Distribution of {column}', fontsize=14)
+    plt.xlabel(column)
+    plt.ylabel('Count')
+
+    # Display the count on bars
+    for i, count in enumerate(category_counts.values):
+        plt.text(i, count + 0.01 * max(category_counts.values), str(count), ha='center', fontsize=6)
+    
     plt.show()
 
 # Boxplots
