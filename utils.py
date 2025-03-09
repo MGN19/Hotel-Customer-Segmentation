@@ -8,7 +8,7 @@ outliers_dict = {'Age': {"n_bins": 15, "left_out": None, "right_out": None},
                  'OtherRevenue': {"n_bins": 15, "left_out": None, "right_out": 3500},
                  'BookingsCanceled': {"n_bins": 15, "left_out": None, "right_out": 4.5},
                  'BookingsNoShowed': {"n_bins": 15, "left_out": None, "right_out": 2.5},
-                 'BookingsCheckedIn': {"n_bins": 15, "left_out": None, "right_out": 60},
+                 'BookingsCheckedIn': {"n_bins": 15, "left_out": None, "right_out": 45},
                  'PersonsNights': {"n_bins": 15, "left_out": None, "right_out": 80},
                  'RoomNights': {"n_bins": 15, "left_out": None, "right_out": 80},
                  'TotalRevenue': {"n_bins": 15, "left_out": None, "right_out": 9250},
@@ -20,11 +20,8 @@ outliers_dict = {'Age': {"n_bins": 15, "left_out": None, "right_out": None},
 # Dictionary defining outlier ellipses
 plot_params_dict = {
     ('DaysSinceCreation', 'BookingsNoShowed'): {
-        'color': f.main_color,
-        'ellipses': [
-            {'center': (100, 1), 'width': 100, 'height': 0.5, 'angle':0}
-        ]
-    },
+        'color': f.main_color},
+        
     ('AverageLeadTime', 'BookingsCheckedIn'): {
         'color': f.main_color,
         'ellipses': [
@@ -34,8 +31,8 @@ plot_params_dict = {
     ('OtherRevenue', 'BookingsCheckedIn'): {
         'color': f.main_color,
         'ellipses': [
-            {'center': (2500, 20), 'width': 1000, 'height': 4, 'angle':0},
-            {'center': (700, 37), 'width': 400, 'height': 8, 'angle':0}
+            {'center': (2500, 20), 'width': 1000, 'height': 6, 'angle':0},
+            {'center': (700, 37), 'width': 400, 'height': 9, 'angle':0}
         ]
     },
     ('Age', 'BookingsCheckedIn'): {
@@ -51,11 +48,7 @@ plot_params_dict = {
         ]
     },
     ('LodgingRevenue', 'RetentionRate'): {
-        'color': f.main_color,
-        'ellipses': [
-            {'center': (5700, 0.33), 'width': 200, 'height': 0.03, 'angle':0}
-        ]
-    },
+        'color': f.main_color},
     ('OtherRevenue', 'BookingsCanceled'): {
         'color': f.main_color,
         'ellipses': [
@@ -65,14 +58,7 @@ plot_params_dict = {
     ('OtherRevenue', 'RetentionRate'): {
         'color': f.main_color,
         'ellipses': [
-            {'center': (1500, 0.34), 'width': 300, 'height': 0.05, 'angle':0},
-            {'center': (3050, 0.92), 'width': 100, 'height': 0.05, 'angle':0}
-        ]
-    },
-    ('OtherRevenue', 'PreferenceScore'): {
-        'color': f.main_color,
-        'ellipses': [
-            {'center': (2550, 3), 'width': 150, 'height': 0.3, 'angle':0}
+            {'center': (3060, 0.99), 'width': 190, 'height': 0.06, 'angle':0}
         ]
     },
     ('BookingsCanceled', 'BookingsCheckedIn'): {
@@ -81,24 +67,13 @@ plot_params_dict = {
             {'center': (0, 32), 'width': 0.2, 'height': 3, 'angle':0}
         ]
     },
-    ('BookingsCanceled', 'LTV'): {
-        'color': f.main_color,
-        'ellipses': [
-            {'center': (1, 36.8), 'width': 0.13, 'height': 5, 'angle':0}
-        ]
-    },
+
     ('BookingsCanceled', 'RevenuePerNight'): {
-        'color': f.main_color,
-        'ellipses': [
-            {'center': (1, 1050), 'width': 0.1, 'height': 80, 'angle':0}
-        ]
-    },
+        'color': f.main_color},
+
     ('BookingsCanceled', 'RevenuePerPersonNight'): {
-        'color': f.main_color,
-        'ellipses': [
-            {'center': (1, 550), 'width': 0.1, 'height': 80, 'angle':0}
-        ]
-    },
+        'color': f.main_color},
+        
     ('BookingsNoShowed', 'BookingsCheckedIn'): {
         'color': f.main_color,
         'ellipses': [
@@ -113,18 +88,6 @@ plot_params_dict = {
             {'center': (32, 8097), 'width': 1, 'height': 300, 'angle':0}
         ]
     },
-    ('BookingsCheckedIn', 'LTV'): {
-        'color': f.main_color,
-        'ellipses': [
-            {'center': (8, 34.5), 'width': 1, 'height': 5, 'angle':0}
-        ]
-    },
-    ('PersonsNights', 'LTV'): {
-        'color': f.main_color,
-        'ellipses': [
-            {'center': (60, 62), 'width': 2, 'height': 3, 'angle':0}
-        ]
-    },
     ('RoomNights', 'TotalRevenue'): {
         'color': f.main_color,
         'ellipses': [
@@ -132,47 +95,16 @@ plot_params_dict = {
         ]
     },
     ('RoomNights', 'RetentionRate'): {
-        'color': f.main_color,
-        'ellipses': [
-            {'center': (59, 0.5), 'width': 1, 'height': 0.03, 'angle':0}
-        ]
-    },
-    ('RoomNights', 'PreferenceScore'): {
-        'color': f.main_color,
-        'ellipses': [
-            {'center': (51, 2), 'width': 1.7, 'height': 0.2, 'angle':0}
-        ]
-    },
-    ('TotalRevenue', 'PreferenceScore'): {
-        'color': f.main_color,
-        'ellipses': [
-            {'center': (5000, 3), 'width': 200, 'height': 0.1, 'angle':0}
-        ]
-    },
-    ('RevenuePerPersonNight', 'PreferenceScore'): {
-        'color': f.main_color,
-        'ellipses': [
-            {'center': (890, 1), 'width': 30, 'height': 0.1, 'angle':0}
-        ]
-    },
-    ('LTV', 'RevenuePerPersonNight'): {
-        'color': f.main_color,
-        'ellipses': [
-            {'center': (37.3, 889.6), 'width': 3, 'height': 40, 'angle':0}
-        ]
-    },
+        'color': f.main_color},
+
     ('RetentionRate', 'RevenuePerNight'): {
-        'color': f.main_color,
-        'ellipses': [
-            {'center': (0.33, 1048), 'width':0.03, 'height': 70, 'angle':0}
-        ]
+        'color': f.main_color
     }
 }
 
 # Index of multivariate outliers
-multivariate_outliers = [94231, 2133, 64309, 65589, 3038, 97232, 17576, 36848, 92877, 97232, 64309,
-                          3038, 65589, 17576, 60055, 92061, 92877, 92877, 72942, 92061, 24069, 17576,
-                            72942, 92061, 3038, 64309, 65589, 17576, 3038, 65589, 64309, 50584, 27886]
+multivariate_outliers = [2125, 92358, 36623, 17462, 96699, 3022, 65219, 63943, 96699, 63943, 65219, 3022, 17462, 59709,
+                         92358, 92358, 2675, 17462, 3022, 63943, 65219, 17462, 3022, 65219, 63943, 17462, 99189, 36623]
 
 
 continent_dict = {
