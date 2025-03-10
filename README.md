@@ -8,7 +8,7 @@ This repository contains the details of a Customer Segmentation Project focusing
 
 To successfully deploy this project, one must:
 1. run 01_EDA
-2. run 02_Clusterin
+2. run 02_Clustering
 - *functions* and *utils* are external py files that contain functions used across both notebooks
 
 
